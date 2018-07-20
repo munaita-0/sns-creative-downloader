@@ -1,5 +1,5 @@
 # WHAT
-- This is ad-creative-image scraping tool for facebook/twitter ad-transparent pages.
+This is ad-creative-image scraping tool for facebook/twitter ad-transparent pages.
 
 # How
 
@@ -13,4 +13,4 @@ Twitter
 ruby tw_scraping.rb https://ads.twitter.com/transparency/${client_id}
 ```
 
-- Please check `./fb_files` or `tw_files` directories under the project.
+Please check `./fb_files` or `tw_files` directories under the project after the command.
