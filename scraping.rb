@@ -3,8 +3,81 @@ require 'selenium-webdriver'
 require 'open-uri'
 
 # url = 'https://www.facebook.com/pg/g.u.japan/ads/?ref=page_internal'
-# url = 'https://ads.twitter.com/transparency/UNIQLO_JP'
-url = 'https://ads.twitter.com/transparency/suntory'
+url = 'https://ads.twitter.com/transparency/UNIQLO_JP'
+# url = 'https://ads.twitter.com/transparency/suntory'
+
+#Selenium Driver経由でChromeを呼び出す
+driver = Selenium::WebDriver.for :chrome
+
+#Googleに遷移する
+driver.get url
+
+#ページロード待機
+wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
+begin
+  # htmlを解析しid=some-dynamic-elementがあるかチェック
+  element = wait.until { driver.find_element(:class => "Card-imageContainer") }
+  
+  # sourceをファイルに書き込む
+  File.open('source.txt', 'w') do |f|
+    f.puts(driver.page_source)
+  end
+
+  doc = File.open("source.txt") { |f| Nokogiri::HTML(f) }
+
+  # img
+  # count = 0
+  # doc.xpath('//img').each do |i|
+  #   next if i['class'] == 'Tweet-avatar'
+  #   next if i['class'] == 'Card-ownerAvatar'
+  #   p i['src']
+  #   p i['class']
+  #   open(i['src']) do |image|
+  #     File.open("#{count}.img.jpg","wb") do |file|
+  #       file.puts image.read
+  #     end
+  #     count = count + 1
+  #   end
+  # end
+
+  # text
+  # doc.css(".Tweet-text").each do |t|
+  #   puts t
+  # end
+
+  # both
+  count = 0
+  doc.css(".Tweet--web").each do |t|
+    text = t.css('.Tweet-text').to_s
+    t.xpath('//img').each do |i|
+      next if i['class'] == 'Tweet-avatar'
+      next if i['class'] == 'Card-ownerAvatar'
+
+      p i['src']
+
+      open(i['src']) do |image|
+        File.open("#{count}.img.jpg","wb") do |file|
+          file.puts image.read
+        end
+      
+        File.open("#{count}.txt", "w") do |f|
+          f.puts(text)
+        end
+      
+        count = count + 1
+      end
+    end
+    p '=========='
+  end
+
+
+ensure
+  # wait-timeoutで見つからなかったら、ドライバを解放しブラウザを閉じる
+  driver.quit
+end
+
+sleep 3
+driver.close
 
 # Facebook
 # agent = Mechanize.new
@@ -32,40 +105,3 @@ agent = Mechanize.new
 #   p 'bb'
 #   p i.to_s
 # end
-
-#Selenium Driver経由でChromeを呼び出す
-driver = Selenium::WebDriver.for :chrome
-
-#Googleに遷移する
-driver.get url
-
-#ページロード待機
-wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
-begin
-  # htmlを解析しid=some-dynamic-elementがあるかチェック
-  element = wait.until { driver.find_element(:class => "Card-imageContainer") }
-  File.open('hoge.txt', 'w') do |f|
-    f.puts(driver.page_source)
-  end
-
-  doc = File.open("hoge.txt") { |f| Nokogiri::HTML(f) }
-  count = 0
-  doc.xpath('//img').each do |i|
-    next if i['class'] == 'Tweet-avatar'
-    next if i['class'] == 'Card-ownerAvatar'
-    p i['src']
-    p i['class']
-    open(i['src']) do |image|
-      File.open("#{count}.img.jpg","wb") do |file|
-        file.puts image.read
-      end
-      count = count + 1
-    end
-  end
-ensure
-  # wait-timeoutで見つからなかったら、ドライバを解放しブラウザを閉じる
-  driver.quit
-end
-
-sleep 3
-driver.close
