@@ -16,7 +16,6 @@ agent.submit(login_form)
 
 ad_page = agent.get(url)
 
-# sourceをファイルに書き込む
 File.open('fb.source', 'w') do |f|
   f.puts(ad_page.body)
 end
@@ -31,6 +30,6 @@ doc.xpath("//img").each do |i|
     File.open("fb_files/#{count}.img.jpg","wb") do |file|
       file.puts image.read
     end
-    count = count + 1
+    count += 1
   end
 end

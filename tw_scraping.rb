@@ -7,18 +7,13 @@ url = ARGV[0]
 driver = Selenium::WebDriver.for :chrome
 driver.get url
 
-#ページロード待機
-wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
+wait = Selenium::WebDriver::Wait.new(:timeout => 10)
 element = wait.until { driver.find_element(:tag_name => "img") }
 
-# sourceをファイルに書き込む
-File.open('tw.source', 'w') do |f|
-  f.puts(driver.page_source)
-end
+File.open('tw.source', 'w') { |f| f.puts(driver.page_source) }
 
 doc = File.open("tw.source") { |f| Nokogiri::HTML(f) }
 
-# both
 count = 0
 doc.css(".Tweet--web").each do |t|
   text = t.css('.Tweet-text').to_s
@@ -37,7 +32,7 @@ doc.css(".Tweet--web").each do |t|
       f.puts(text)
     end
 
-    count = count + 1
+    count += 1
   end
 end
 
