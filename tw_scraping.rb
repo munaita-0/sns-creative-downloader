@@ -12,11 +12,11 @@ wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
 element = wait.until { driver.find_element(:tag_name => "img") }
 
 # sourceをファイルに書き込む
-File.open('source.html', 'w') do |f|
+File.open('tw.source', 'w') do |f|
   f.puts(driver.page_source)
 end
 
-doc = File.open("source.html") { |f| Nokogiri::HTML(f) }
+doc = File.open("tw.source") { |f| Nokogiri::HTML(f) }
 
 # both
 count = 0
@@ -29,11 +29,11 @@ doc.css(".Tweet--web").each do |t|
   puts img
 
   open(img['src']) do |image|
-    File.open("files/#{count}.img.jpg","wb") do |file|
+    File.open("tw_files/#{count}.img.jpg","wb") do |file|
       file.puts image.read
     end
 
-    File.open("files/#{count}.txt", "w") do |f|
+    File.open("tw_files/#{count}.txt", "w") do |f|
       f.puts(text)
     end
 
