@@ -2,9 +2,9 @@ require 'mechanize'
 require 'selenium-webdriver'
 require 'open-uri'
 
-email = ARGV[0]
-pass = ARGV[1]
-url = ARGV[2]
+email = ENV['FB_EMAIL']
+pass = ENV['FB_PASS']
+url = ARGV[0]
 
 agent = Mechanize.new
 agent.user_agent_alias = 'Mac Mozilla'
